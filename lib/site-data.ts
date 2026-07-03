@@ -17,10 +17,20 @@ import {
 
 export const site = {
   name: "Deccan Digital Solutions",
+  legalName: "Salman Pathan",
   url: "https://deccan-digital-solutions.vercel.app",
   location: "Kannad, Maharashtra",
-  email: "hello@deccandigitalsolutions.com",
-  phone: "+91 98765 43210"
+  addressLine: "Kunjkheda, Kannad, Maharashtra 431103",
+  addressLocality: "Kannad",
+  addressRegion: "Maharashtra",
+  postalCode: "431103",
+  addressCountry: "IN",
+  email: "indiadn970@gmail.com",
+  phone: "+91 9766003144",
+  phoneRaw: "919766003144",
+  whatsapp: "919766003144",
+  hours: "Mon-Sat, 10:00 AM - 7:00 PM IST",
+  responseTime: "Usually within a few hours"
 };
 
 export const services = [

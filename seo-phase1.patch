@@ -1,0 +1,187 @@
+diff --git a/app/layout.tsx b/app/layout.tsx
+index b0b73e4..1c6a1f6 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -6,30 +6,40 @@ import { Inter } from "next/font/google";
+ 
+ import { SiteFooter } from "@/components/site-footer";
+ import { SiteHeader } from "@/components/site-header";
++import { WhatsappButton } from "@/components/whatsapp-button";
+ import { site } from "@/lib/site-data";
+ import "./globals.css";
+ 
+ const inter = Inter({ subsets: ["latin"] });
+ 
++const TITLE = "Deccan Digital Solutions | Android, Web & Software Dev, Kannad";
++const DESCRIPTION =
++  "Deccan Digital Solutions builds Android apps, websites, web apps, desktop software, and cloud hosting for small businesses across Maharashtra. Based in Kannad. Get a free quote.";
++
+ export const metadata: Metadata = {
+   metadataBase: new URL(site.url),
+   title: {
+-    default: `${site.name} | Digital Solutions for Small Businesses`,
++    default: TITLE,
+     template: `%s | ${site.name}`
+   },
+-  description:
+-    "Freelance Next.js websites, custom web apps, hosted dashboards, and downloadable app builds for small businesses in Kannad, Maharashtra.",
++  description: DESCRIPTION,
+   keywords: [
+     "Deccan Digital Solutions",
++    "Android app development Kannad",
++    "APK development Maharashtra",
++    "web app development Kannad",
++    "custom software development Maharashtra",
+     "freelance developer Kannad",
+-    "small business websites",
+     "Next.js developer Maharashtra",
+-    "downloadable apps"
++    "cloud hosting small business India",
++    "IT consulting Aurangabad"
+   ],
++  alternates: {
++    canonical: site.url
++  },
+   openGraph: {
+-    title: `${site.name} | Digital Solutions for Small Businesses`,
+-    description:
+-      "Fast apps and websites for local businesses, with hosting, care, and downloadable client apps.",
++    title: TITLE,
++    description: DESCRIPTION,
+     url: site.url,
+     siteName: site.name,
+     locale: "en_IN",
+@@ -37,8 +47,8 @@ export const metadata: Metadata = {
+   },
+   twitter: {
+     card: "summary_large_image",
+-    title: `${site.name} | Digital Solutions for Small Businesses`,
+-    description: "Fast apps, websites, and hosted dashboards for small businesses."
++    title: TITLE,
++    description: DESCRIPTION
+   },
+   robots: {
+     index: true,
+@@ -46,13 +56,55 @@ export const metadata: Metadata = {
+   }
+ };
+ 
++const organizationSchema = {
++  "@context": "https://schema.org",
++  "@type": "ProfessionalService",
++  name: site.name,
++  founder: { "@type": "Person", name: site.legalName },
++  url: site.url,
++  email: site.email,
++  telephone: site.phone,
++  address: {
++    "@type": "PostalAddress",
++    streetAddress: "Kunjkheda",
++    addressLocality: site.addressLocality,
++    addressRegion: site.addressRegion,
++    postalCode: site.postalCode,
++    addressCountry: site.addressCountry
++  },
++  areaServed: "Maharashtra, India",
++  openingHours: "Mo-Sa 10:00-19:00",
++  sameAs: [],
++  makesOffer: [
++    "Android App Development",
++    "Web Application Development",
++    "Website Development",
++    "Desktop Application Development",
++    "UI/UX Design",
++    "Cloud Hosting",
++    "API Development & Integration",
++    "Database Design",
++    "Custom Software Development",
++    "IT Consulting"
++  ].map((name) => ({
++    "@type": "Offer",
++    itemOffered: { "@type": "Service", name }
++  }))
++};
++
+ export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+   return (
+     <html lang="en">
+       <body className={inter.className}>
++        <script
++          type="application/ld+json"
++          // eslint-disable-next-line react/no-danger
++          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
++        />
+         <SiteHeader />
+         {children}
+         <SiteFooter />
++        <WhatsappButton />
+         <Analytics />
+         <SpeedInsights />
+       </body>
+diff --git a/app/page.tsx b/app/page.tsx
+index b007bf4..19c9951 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -1,5 +1,5 @@
+ import Link from "next/link";
+-import { ArrowRight, CheckCircle2, Download, Mail } from "lucide-react";
++import { ArrowRight, CheckCircle2, Clock, Download, Mail, MapPin, Phone } from "lucide-react";
+ 
+ import { ContactForm } from "@/components/contact-form";
+ import { DashboardMockup } from "@/components/dashboard-mockup";
+@@ -156,12 +156,24 @@ export default function HomePage() {
+                 )
+               )}
+             </div>
+-            <Button asChild variant="outline" className="mt-8">
+-              <a href={`mailto:${site.email}`}>
+-                <Mail className="h-4 w-4" />
++            <div className="mt-8 grid gap-3 text-sm text-slate-700">
++              <a href={`mailto:${site.email}`} className="flex items-center gap-2 font-medium hover:text-primary">
++                <Mail className="h-4 w-4 text-primary" />
+                 {site.email}
+               </a>
+-            </Button>
++              <a href={`tel:${site.phoneRaw}`} className="flex items-center gap-2 font-medium hover:text-primary">
++                <Phone className="h-4 w-4 text-primary" />
++                {site.phone}
++              </a>
++              <p className="flex items-center gap-2 font-medium">
++                <MapPin className="h-4 w-4 text-primary" />
++                {site.addressLine}
++              </p>
++              <p className="flex items-center gap-2 font-medium">
++                <Clock className="h-4 w-4 text-primary" />
++                {site.hours} &middot; {site.responseTime}
++              </p>
++            </div>
+           </div>
+           <ContactForm />
+         </div>
+diff --git a/lib/site-data.ts b/lib/site-data.ts
+index b5579ce..ecb5486 100644
+--- a/lib/site-data.ts
++++ b/lib/site-data.ts
+@@ -17,10 +17,20 @@ import {
+ 
+ export const site = {
+   name: "Deccan Digital Solutions",
++  legalName: "Salman Pathan",
+   url: "https://deccan-digital-solutions.vercel.app",
+   location: "Kannad, Maharashtra",
+-  email: "hello@deccandigitalsolutions.com",
+-  phone: "+91 98765 43210"
++  addressLine: "Kunjkheda, Kannad, Maharashtra 431103",
++  addressLocality: "Kannad",
++  addressRegion: "Maharashtra",
++  postalCode: "431103",
++  addressCountry: "IN",
++  email: "indiadn970@gmail.com",
++  phone: "+91 9766003144",
++  phoneRaw: "919766003144",
++  whatsapp: "919766003144",
++  hours: "Mon-Sat, 10:00 AM - 7:00 PM IST",
++  responseTime: "Usually within a few hours"
+ };
+ 
+ export const services = [

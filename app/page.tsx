@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Download, Mail } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock, Download, Mail, MapPin, Phone } from "lucide-react";
 
 import { ContactForm } from "@/components/contact-form";
 import { DashboardMockup } from "@/components/dashboard-mockup";
@@ -156,12 +156,24 @@ export default function HomePage() {
                 )
               )}
             </div>
-            <Button asChild variant="outline" className="mt-8">
-              <a href={`mailto:${site.email}`}>
-                <Mail className="h-4 w-4" />
+            <div className="mt-8 grid gap-3 text-sm text-slate-700">
+              <a href={`mailto:${site.email}`} className="flex items-center gap-2 font-medium hover:text-primary">
+                <Mail className="h-4 w-4 text-primary" />
                 {site.email}
               </a>
-            </Button>
+              <a href={`tel:${site.phoneRaw}`} className="flex items-center gap-2 font-medium hover:text-primary">
+                <Phone className="h-4 w-4 text-primary" />
+                {site.phone}
+              </a>
+              <p className="flex items-center gap-2 font-medium">
+                <MapPin className="h-4 w-4 text-primary" />
+                {site.addressLine}
+              </p>
+              <p className="flex items-center gap-2 font-medium">
+                <Clock className="h-4 w-4 text-primary" />
+                {site.hours} &middot; {site.responseTime}
+              </p>
+            </div>
           </div>
           <ContactForm />
         </div>
