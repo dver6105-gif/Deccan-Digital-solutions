@@ -66,7 +66,7 @@ export const portfolio = [
     description: "A fast invoice and inventory dashboard for local stores.",
     tech: ["Next.js", "PostgreSQL", "Razorpay"],
     image: "billing",
-    liveUrl: "https://example.com",
+    liveUrl: "https://retail-billing-desk-2hhp4lkd0-dver6105-gifs-projects.vercel.app/",
     type: "Web app"
   },
   {
