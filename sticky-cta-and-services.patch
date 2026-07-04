@@ -1,0 +1,374 @@
+diff --git a/app/downloads/page.tsx b/app/downloads/page.tsx
+index e685a2f..226062d 100644
+--- a/app/downloads/page.tsx
++++ b/app/downloads/page.tsx
+@@ -1,12 +1,13 @@
+ import type { Metadata } from "next";
+-import { Download, ShieldCheck } from "lucide-react";
++import Link from "next/link";
++import { ArrowRight, Download, ShieldCheck } from "lucide-react";
+ 
+ import { MotionSection } from "@/components/motion-section";
+ import { SectionHeading } from "@/components/section-heading";
+ import { Badge } from "@/components/ui/badge";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+-import { downloads } from "@/lib/site-data";
++import { apps, downloads } from "@/lib/site-data";
+ 
+ export const metadata: Metadata = {
+   title: "Downloads",
+@@ -27,7 +28,40 @@ export default function DownloadsPage() {
+       </section>
+ 
+       <MotionSection className="container py-16">
+-        <div className="grid gap-5 lg:grid-cols-3">
++        <h2 className="text-xl font-bold tracking-tight">Apps (Marathi & English)</h2>
++        <div className="mt-5 grid gap-5 lg:grid-cols-2">
++          {apps.map((app) => (
++            <Card key={app.slug}>
++              <CardHeader>
++                <div className="flex items-start justify-between gap-4">
++                  <div className="flex h-12 w-12 items-center justify-center rounded-md bg-primary/10 text-primary">
++                    <app.icon className="h-6 w-6" />
++                  </div>
++                  <Badge variant="secondary">Android APK</Badge>
++                </div>
++                <CardTitle className="leading-7">{app.name}</CardTitle>
++              </CardHeader>
++              <CardContent>
++                <p className="text-sm leading-6 text-muted-foreground">{app.tagline}</p>
++                <div className="mt-5 flex items-center justify-between text-sm text-muted-foreground">
++                  <span>v{app.version}</span>
++                  <span>{app.size}</span>
++                </div>
++                <Button asChild className="mt-6 w-full">
++                  <Link href={`/downloads/${app.slug}`}>
++                    View & Download
++                    <ArrowRight className="h-4 w-4" />
++                  </Link>
++                </Button>
++              </CardContent>
++            </Card>
++          ))}
++        </div>
++      </MotionSection>
++
++      <MotionSection className="container pb-16">
++        <h2 className="text-xl font-bold tracking-tight">Demo Files</h2>
++        <div className="mt-5 grid gap-5 lg:grid-cols-3">
+           {downloads.map((item) => (
+             <Card key={item.title}>
+               <CardHeader>
+diff --git a/app/layout.tsx b/app/layout.tsx
+index 1c6a1f6..9ae787f 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -6,6 +6,7 @@ import { Inter } from "next/font/google";
+ 
+ import { SiteFooter } from "@/components/site-footer";
+ import { SiteHeader } from "@/components/site-header";
++import { StickyGetQuote } from "@/components/sticky-get-quote";
+ import { WhatsappButton } from "@/components/whatsapp-button";
+ import { site } from "@/lib/site-data";
+ import "./globals.css";
+@@ -102,9 +103,10 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode
+           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+         />
+         <SiteHeader />
+-        {children}
++        <div className="pb-16 md:pb-0">{children}</div>
+         <SiteFooter />
+         <WhatsappButton />
++        <StickyGetQuote />
+         <Analytics />
+         <SpeedInsights />
+       </body>
+diff --git a/app/page.tsx b/app/page.tsx
+index 19c9951..cdbe897 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -60,19 +60,25 @@ export default function HomePage() {
+           title="Simple software that moves real work"
+           description="Focused builds for small businesses that need practical systems, clean websites, and dependable hosting."
+         />
+-        <div className="mt-12 grid gap-5 md:grid-cols-3">
++        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+           {services.map((service) => (
+-            <Card key={service.title}>
+-              <CardHeader>
+-                <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-md bg-primary/10 text-primary">
+-                  <service.icon className="h-6 w-6" />
+-                </div>
+-                <CardTitle>{service.title}</CardTitle>
+-              </CardHeader>
+-              <CardContent>
+-                <p className="text-sm leading-6 text-muted-foreground">{service.description}</p>
+-              </CardContent>
+-            </Card>
++            <Link key={service.title} href={`/services/${service.slug}`} className="block">
++              <Card className="h-full transition-shadow hover:shadow-md">
++                <CardHeader>
++                  <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-md bg-primary/10 text-primary">
++                    <service.icon className="h-6 w-6" />
++                  </div>
++                  <CardTitle>{service.title}</CardTitle>
++                </CardHeader>
++                <CardContent>
++                  <p className="text-sm leading-6 text-muted-foreground">{service.description}</p>
++                  <p className="mt-4 flex items-center gap-1 text-sm font-medium text-primary">
++                    Learn more
++                    <ArrowRight className="h-3.5 w-3.5" />
++                  </p>
++                </CardContent>
++              </Card>
++            </Link>
+           ))}
+         </div>
+       </MotionSection>
+diff --git a/app/sitemap.ts b/app/sitemap.ts
+index e8d2bdb..f47692c 100644
+--- a/app/sitemap.ts
++++ b/app/sitemap.ts
+@@ -1,5 +1,6 @@
+ import type { MetadataRoute } from "next";
+ 
++import { servicesDetail } from "@/lib/services-detail";
+ import { site } from "@/lib/site-data";
+ 
+ export default function sitemap(): MetadataRoute.Sitemap {
+@@ -10,11 +11,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
+       changeFrequency: "weekly",
+       priority: 1
+     },
++    ...servicesDetail.map((service) => ({
++      url: `${site.url}/services/${service.slug}`,
++      lastModified: new Date(),
++      changeFrequency: "monthly" as const,
++      priority: 0.8
++    })),
+     {
+       url: `${site.url}/downloads`,
+       lastModified: new Date(),
+       changeFrequency: "monthly",
+       priority: 0.8
++    },
++    {
++      url: `${site.url}/downloads/findmyworker`,
++      lastModified: new Date(),
++      changeFrequency: "monthly",
++      priority: 0.7
++    },
++    {
++      url: `${site.url}/downloads/onlinebc-kunjkheda`,
++      lastModified: new Date(),
++      changeFrequency: "monthly",
++      priority: 0.7
+     }
+   ];
+ }
+diff --git a/components/contact-form.tsx b/components/contact-form.tsx
+index c88c8de..d3d5c3d 100644
+--- a/components/contact-form.tsx
++++ b/components/contact-form.tsx
+@@ -1,8 +1,7 @@
+ "use client";
+ 
+ import { zodResolver } from "@hookform/resolvers/zod";
+-import { Loader2, Send } from "lucide-react";
+-import { useState } from "react";
++import { MessageCircle } from "lucide-react";
+ import { useForm } from "react-hook-form";
+ 
+ import { Button } from "@/components/ui/button";
+@@ -10,15 +9,28 @@ import { Input } from "@/components/ui/input";
+ import { Label } from "@/components/ui/label";
+ import { Textarea } from "@/components/ui/textarea";
+ import { contactSchema, type ContactFormValues } from "@/lib/contact-schema";
++import { site } from "@/lib/site-data";
+ 
+ const services = ["Custom web app", "Business website", "App hosting & care", "Downloadable app"];
+ 
++function buildWhatsappMessage(values: ContactFormValues) {
++  const lines = [
++    "New enquiry from the website:",
++    `Name: ${values.name}`,
++    `Phone: ${values.phone || "-"}`,
++    `Email: ${values.email}`,
++    `Service: ${values.service}`,
++    `Budget: ${values.budget || "-"}`,
++    "",
++    `Details: ${values.message}`
++  ];
++  return encodeURIComponent(lines.join("\n"));
++}
++
+ export function ContactForm() {
+-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+   const {
+     register,
+     handleSubmit,
+-    reset,
+     formState: { errors, isSubmitting }
+   } = useForm<ContactFormValues>({
+     resolver: zodResolver(contactSchema),
+@@ -27,21 +39,9 @@ export function ContactForm() {
+     }
+   });
+ 
+-  async function onSubmit(values: ContactFormValues) {
+-    setStatus("idle");
+-    const response = await fetch("/api/contact", {
+-      method: "POST",
+-      headers: { "Content-Type": "application/json" },
+-      body: JSON.stringify(values)
+-    });
+-
+-    if (!response.ok) {
+-      setStatus("error");
+-      return;
+-    }
+-
+-    setStatus("success");
+-    reset({ service: services[0], name: "", email: "", phone: "", budget: "", message: "" });
++  function onSubmit(values: ContactFormValues) {
++    const text = buildWhatsappMessage(values);
++    window.open(`https://wa.me/${site.whatsapp}?text=${text}`, "_blank", "noopener,noreferrer");
+   }
+ 
+   return (
+@@ -86,20 +86,13 @@ export function ContactForm() {
+         <Textarea id="message" placeholder="What should the app or website do?" {...register("message")} />
+         {errors.message && <p className="text-sm text-destructive">{errors.message.message}</p>}
+       </div>
+-      <Button type="submit" disabled={isSubmitting} size="lg">
+-        {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+-        Send Inquiry
++      <Button type="submit" disabled={isSubmitting} size="lg" className="bg-[#25D366] hover:bg-[#1ebe57]">
++        <MessageCircle className="h-4 w-4" />
++        Send Enquiry on WhatsApp
+       </Button>
+-      {status === "success" && (
+-        <p className="rounded-md bg-emerald-50 p-3 text-sm font-medium text-emerald-700">
+-          Thanks. Your inquiry has been received.
+-        </p>
+-      )}
+-      {status === "error" && (
+-        <p className="rounded-md bg-red-50 p-3 text-sm font-medium text-red-700">
+-          Something went wrong. Please email directly and I will respond.
+-        </p>
+-      )}
++      <p className="text-center text-xs text-muted-foreground">
++        Opens WhatsApp with your details filled in. Nothing is sent until you hit send there.
++      </p>
+     </form>
+   );
+ }
+diff --git a/components/site-header.tsx b/components/site-header.tsx
+index 8a346eb..aa2955f 100644
+--- a/components/site-header.tsx
++++ b/components/site-header.tsx
+@@ -1,6 +1,7 @@
+ import Link from "next/link";
+ import { Download, Mail } from "lucide-react";
+ 
++import { MobileNav } from "@/components/mobile-nav";
+ import { Button } from "@/components/ui/button";
+ import { site } from "@/lib/site-data";
+ 
+@@ -35,12 +36,13 @@ export function SiteHeader() {
+               Apps
+             </Link>
+           </Button>
+-          <Button asChild size="sm">
++          <Button asChild size="sm" className="hidden md:inline-flex">
+             <Link href="/#contact">
+               <Mail className="h-4 w-4" />
+               Contact
+             </Link>
+           </Button>
++          <MobileNav />
+         </div>
+       </div>
+     </header>
+diff --git a/components/whatsapp-button.tsx b/components/whatsapp-button.tsx
+index 8361a38..3a48bbe 100644
+--- a/components/whatsapp-button.tsx
++++ b/components/whatsapp-button.tsx
+@@ -13,7 +13,7 @@ export function WhatsappButton() {
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Chat with us on WhatsApp"
+-      className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#25D366]"
++      className="fixed bottom-20 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#25D366] md:bottom-5"
+     >
+       <MessageCircle className="h-7 w-7" fill="white" />
+       <span className="sr-only">Chat on WhatsApp</span>
+diff --git a/lib/site-data.ts b/lib/site-data.ts
+index ecb5486..f573e03 100644
+--- a/lib/site-data.ts
++++ b/lib/site-data.ts
+@@ -35,19 +35,28 @@ export const site = {
+ 
+ export const services = [
+   {
+-    title: "Custom Web Apps",
+-    description: "React/Next.js apps with dashboards, payments, admin panels",
+-    icon: LayoutDashboard
++    title: "Android App Development",
++    description: "Native Kotlin & Jetpack Compose apps with Firebase and bilingual UI.",
++    icon: Smartphone,
++    slug: "android-app-development"
+   },
+   {
+-    title: "Business Websites",
+-    description: "SEO-optimized sites that load fast and convert visitors",
+-    icon: Globe2
++    title: "Web Development",
++    description: "SEO-optimized Next.js websites and web apps that load fast and convert visitors.",
++    icon: Globe2,
++    slug: "web-development"
+   },
+   {
+-    title: "App Hosting & Care",
+-    description: "Deploy, monitor, and maintain your apps. Free hosting setup included",
+-    icon: CloudCog
++    title: "Custom Software Development",
++    description: "Billing, POS, and community management tools built around your workflow.",
++    icon: LayoutDashboard,
++    slug: "custom-software-development"
++  },
++  {
++    title: "Cloud Hosting",
++    description: "Deploy and host on Vercel and Firebase, at close to zero cost. Free setup included.",
++    icon: CloudCog,
++    slug: "cloud-hosting"
+   }
+ ];
+ 
+@@ -126,6 +135,25 @@ export const stats = [
+   { label: "Lighthouse focus", value: "90+" }
+ ];
+ 
++export const apps = [
++  {
++    slug: "findmyworker",
++    name: "FindMyWorker",
++    tagline: "Workers, job posting & local bazaar for the Aurangabad district",
++    version: "1.0.0",
++    size: "31 MB",
++    icon: Smartphone
++  },
++  {
++    slug: "onlinebc-kunjkheda",
++    name: "OnlineBCKunjkheda",
++    tagline: "Automated UPI savings & chit fund manager for community groups",
++    version: "1.0.0",
++    size: "31 MB",
++    icon: Smartphone
++  }
++];
++
+ export const downloads = [
+   {
+     title: "Retail Billing Android App",

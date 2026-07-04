@@ -35,19 +35,28 @@ export const site = {
 
 export const services = [
   {
-    title: "Custom Web Apps",
-    description: "React/Next.js apps with dashboards, payments, admin panels",
-    icon: LayoutDashboard
+    title: "Android App Development",
+    description: "Native Kotlin & Jetpack Compose apps with Firebase and bilingual UI.",
+    icon: Smartphone,
+    slug: "android-app-development"
   },
   {
-    title: "Business Websites",
-    description: "SEO-optimized sites that load fast and convert visitors",
-    icon: Globe2
+    title: "Web Development",
+    description: "SEO-optimized Next.js websites and web apps that load fast and convert visitors.",
+    icon: Globe2,
+    slug: "web-development"
   },
   {
-    title: "App Hosting & Care",
-    description: "Deploy, monitor, and maintain your apps. Free hosting setup included",
-    icon: CloudCog
+    title: "Custom Software Development",
+    description: "Billing, POS, and community management tools built around your workflow.",
+    icon: LayoutDashboard,
+    slug: "custom-software-development"
+  },
+  {
+    title: "Cloud Hosting",
+    description: "Deploy and host on Vercel and Firebase, at close to zero cost. Free setup included.",
+    icon: CloudCog,
+    slug: "cloud-hosting"
   }
 ];
 
@@ -124,6 +133,25 @@ export const stats = [
   { label: "Typical launch", value: "7-21 days" },
   { label: "Hosting setup", value: "Free" },
   { label: "Lighthouse focus", value: "90+" }
+];
+
+export const apps = [
+  {
+    slug: "findmyworker",
+    name: "FindMyWorker",
+    tagline: "Workers, job posting & local bazaar for the Aurangabad district",
+    version: "1.0.0",
+    size: "31 MB",
+    icon: Smartphone
+  },
+  {
+    slug: "onlinebc-kunjkheda",
+    name: "OnlineBCKunjkheda",
+    tagline: "Automated UPI savings & chit fund manager for community groups",
+    version: "1.0.0",
+    size: "31 MB",
+    icon: Smartphone
+  }
 ];
 
 export const downloads = [

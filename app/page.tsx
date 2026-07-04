@@ -60,19 +60,25 @@ export default function HomePage() {
           title="Simple software that moves real work"
           description="Focused builds for small businesses that need practical systems, clean websites, and dependable hosting."
         />
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {services.map((service) => (
-            <Card key={service.title}>
-              <CardHeader>
-                <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-md bg-primary/10 text-primary">
-                  <service.icon className="h-6 w-6" />
-                </div>
-                <CardTitle>{service.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm leading-6 text-muted-foreground">{service.description}</p>
-              </CardContent>
-            </Card>
+            <Link key={service.title} href={`/services/${service.slug}`} className="block">
+              <Card className="h-full transition-shadow hover:shadow-md">
+                <CardHeader>
+                  <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-md bg-primary/10 text-primary">
+                    <service.icon className="h-6 w-6" />
+                  </div>
+                  <CardTitle>{service.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm leading-6 text-muted-foreground">{service.description}</p>
+                  <p className="mt-4 flex items-center gap-1 text-sm font-medium text-primary">
+                    Learn more
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </MotionSection>

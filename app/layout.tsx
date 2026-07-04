@@ -6,6 +6,7 @@ import { Inter } from "next/font/google";
 
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { StickyGetQuote } from "@/components/sticky-get-quote";
 import { WhatsappButton } from "@/components/whatsapp-button";
 import { site } from "@/lib/site-data";
 import "./globals.css";
@@ -102,9 +103,10 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
         <SiteHeader />
-        {children}
+        <div className="pb-16 md:pb-0">{children}</div>
         <SiteFooter />
         <WhatsappButton />
+        <StickyGetQuote />
         <Analytics />
         <SpeedInsights />
       </body>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Download, Mail } from "lucide-react";
 
+import { MobileNav } from "@/components/mobile-nav";
 import { Button } from "@/components/ui/button";
 import { site } from "@/lib/site-data";
 
@@ -35,12 +36,13 @@ export function SiteHeader() {
               Apps
             </Link>
           </Button>
-          <Button asChild size="sm">
+          <Button asChild size="sm" className="hidden md:inline-flex">
             <Link href="/#contact">
               <Mail className="h-4 w-4" />
               Contact
             </Link>
           </Button>
+          <MobileNav />
         </div>
       </div>
     </header>
