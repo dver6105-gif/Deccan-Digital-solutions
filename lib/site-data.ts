@@ -70,11 +70,11 @@ export const portfolio = [
     type: "Web app"
   },
   {
-    title: "Clinic Appointment Hub",
+    title: "MGM Vastanvi English School",
     description: "Patient booking, doctor schedule, and SMS follow-up flow.",
     tech: ["React", "Zod", "Twilio"],
     image: "clinic",
-    liveUrl: "https://example.com",
+    liveUrl: "https://mgm-vastanavi-english-school.vercel.app/",
     type: "SaaS"
   },
   {
