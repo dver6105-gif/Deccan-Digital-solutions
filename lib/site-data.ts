@@ -90,7 +90,7 @@ export const portfolio = [
     description: "Attendance, fee reminders, reports, and parent updates.",
     tech: ["TypeScript", "Prisma", "Auth"],
     image: "school",
-    liveUrl: "https://example.com",
+    liveUrl: "https://school-admin-portal-chi.vercel.app/",
     type: "Portal"
   },
   {
